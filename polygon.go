@@ -1,9 +1,5 @@
 package main
 
-import (
-	"math"
-)
-
 type Vertices []Vector2
 
 type Polygon struct {
@@ -106,33 +102,4 @@ func (p *Polygon) Recalculate() {
 		p.Edges[i] = p.Points.GetNextVertex(i).NewSubtracted(p.Points[i])
 		p.Normals[i] = p.Edges[i].NewPerpendicular().NewNormalized()
 	}
-}
-
-func GetRadiusOfCircumscribedCircleInRegularPolygon(numSides int, sideLen float64) float64 {
-	return sideLen / (2 * math.Sin(math.Pi/float64(numSides)))
-}
-
-func GetRegularPolygonArea(numSides int, sideLen float64) float64 {
-	return (float64(numSides) * sideLen * sideLen) / (4 * math.Tan(math.Pi/float64(numSides)))
-}
-
-func GenerateRegularPolygon(numSides int, sideLen float64) Vertices {
-	var (
-		vertices Vertices
-		angle    = PI2 / float64(numSides)
-	)
-
-	vertices = append(vertices, Vector2Zero)
-	vertices = append(vertices, NewVector2FromAngle(angle, sideLen))
-
-	for i := 2; i < numSides; i++ {
-		vertices = append(
-			vertices,
-			NewVector2AngledFromSection(
-				vertices[i-2], vertices[i-1], angle,
-			),
-		)
-	}
-
-	return vertices
 }
