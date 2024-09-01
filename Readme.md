@@ -1,6 +1,6 @@
 # Machinery
 
-Machinery is a dead simple engine-like toolkit for Go. I extracted it from my fun gamedev project. It provides basic functionalities around vectors, polygons and rigid bodies.
+Machinery is a dead simple game engine toolkit for Go. I extracted it from my fun gamedev project. It provides basic functionalities around vectors, polygons and rigid bodies.
 
 ## How to use
 
