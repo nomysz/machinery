@@ -2,21 +2,34 @@ package main
 
 // given point and segment defined by two other points
 // provide point on segment that is closest to given point
-func GetPointOnSegmentClosestToPoint(p, segmentP1, segmentP2 Vector2) Vector2 {
-	p1ToP := p.NewSubtracted(segmentP1)
-	p1ToP2 := segmentP2.NewSubtracted(segmentP1)
+func GetPointOnSegmentClosestToPoint(p, segmentPA, segmentPB Vector2) Vector2 {
+	pAToP := p.NewSubtracted(segmentPA)
+	pAToPB := segmentPB.NewSubtracted(segmentPA)
 
-	projection := p1ToP.Dot(p1ToP2) / p1ToP2.Dot(p1ToP2)
+	projection := pAToP.Dot(pAToPB) / pAToPB.Dot(pAToPB)
 
 	var contactPoint Vector2
 
 	if projection <= 0 {
-		contactPoint = segmentP1
+		contactPoint = segmentPA
 	} else if projection >= 1 {
-		contactPoint = segmentP2
+		contactPoint = segmentPB
 	} else {
-		contactPoint = segmentP1.NewAdded(p1ToP2.NewScaled(projection))
+		contactPoint = segmentPA.NewAdded(pAToPB.NewScaled(projection))
 	}
 
 	return contactPoint
+}
+
+func GetCircleMomentOfInertia(mass, radius float64) float64 {
+	return .5 * mass * radius * radius
+}
+
+func appendIfMissing[T comparable](slice []T, i T) []T {
+	for _, item := range slice {
+		if item == i {
+			return slice
+		}
+	}
+	return append(slice, i)
 }
