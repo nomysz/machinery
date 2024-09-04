@@ -1,7 +1,5 @@
 package main
 
-import "math"
-
 const broadCollisionRadiusTolerance = 5
 
 type AfterMoveHandler func(self *RigidBody)
@@ -80,8 +78,8 @@ func NewRigidBody(
 	}
 }
 
-func (r *RigidBody) AddForce(force Vector2) {
-	r.force.Add(force)
+func (rb *RigidBody) AddForce(force Vector2) {
+	rb.force.Add(force)
 }
 
 func (rb *RigidBody) Update(w *World) {
@@ -89,7 +87,7 @@ func (rb *RigidBody) Update(w *World) {
 	rb.force = Vector2Zero
 
 	rb.Collider.Position.Add(rb.Velocity.NewScaled(GDrag))
-	rb.Collider.Rotation = math.Mod(rb.Collider.Rotation+rb.AngularVelocity, PI2)
+	rb.Collider.Rotation = NormalizeRadians(rb.Collider.Rotation + rb.AngularVelocity)
 
 	rb.AfterMoveHandler(rb)
 
