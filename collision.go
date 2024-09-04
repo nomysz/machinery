@@ -10,6 +10,54 @@ type Collision struct {
 	ContactPoints []Vector2
 }
 
+func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {
+	var (
+		cp1, cp2      Vector2 = Vector2Zero, Vector2Zero
+		minDistanceSq         = math.MaxFloat64
+	)
+
+	for _, rbAPoint := range rbA.Collider.Points {
+		for i, rbBPoint := range rbB.Collider.Points {
+			cp := GetPointOnSegmentClosestToPoint(rbAPoint, rbBPoint, rbB.Collider.Points.GetNextVertex(i))
+
+			distance := rbAPoint.Distance(cp)
+			distanceSq := distance * distance
+
+			if IsEqualish(distanceSq, minDistanceSq) {
+				if !cp.IsEqualish(cp1) && !cp.IsEqualish(cp2) {
+					cp2 = cp
+				}
+			} else if distanceSq < minDistanceSq {
+				minDistanceSq = distanceSq
+				cp1 = cp
+			}
+		}
+	}
+
+	for _, rbBPoint := range rbB.Collider.Points {
+		for i, rbAPoint := range rbA.Collider.Points {
+			cp := GetPointOnSegmentClosestToPoint(rbBPoint, rbAPoint, rbA.Collider.Points.GetNextVertex(i))
+
+			distance := rbBPoint.Distance(cp)
+			distanceSq := distance * distance
+
+			if IsEqualish(distanceSq, minDistanceSq) {
+				if !cp.IsEqualish(cp1) && !cp.IsEqualish(cp2) {
+					cp2 = cp
+				}
+			} else if distanceSq < minDistanceSq {
+				minDistanceSq = distanceSq
+				cp1 = cp
+			}
+		}
+	}
+
+	if cp2 == Vector2Zero {
+		return []Vector2{cp1}
+	}
+	return []Vector2{cp1, cp2}
+}
+
 func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
 	response := Collision{Depth: math.MaxFloat64, Normal: Vector2Zero}
 
