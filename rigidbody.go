@@ -84,7 +84,7 @@ func (r *RigidBody) AddForce(force Vector2) {
 	r.force.Add(force)
 }
 
-func (rb *RigidBody) Update(w *PhysicalWorld) {
+func (rb *RigidBody) Update(w *World) {
 	rb.Velocity.Add(rb.force.NewScaled(rb.inverseMass))
 	rb.force = Vector2Zero
 

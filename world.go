@@ -5,20 +5,20 @@ const (
 	GDrag    = .98
 )
 
-type PhysicalWorld struct {
+type World struct {
 	rigidBodies   []*RigidBody
 	ContactPoints []Vector2
 }
 
-func NewPhysicalWorld() *PhysicalWorld {
-	return &PhysicalWorld{}
+func NewWorld() *World {
+	return &World{}
 }
 
-func (w *PhysicalWorld) AddRigidBody(rb *RigidBody) {
+func (w *World) AddRigidBody(rb *RigidBody) {
 	w.rigidBodies = appendIfMissing(w.rigidBodies, rb)
 }
 
-func (w *PhysicalWorld) DeleteRigidBody(rb *RigidBody) {
+func (w *World) DeleteRigidBody(rb *RigidBody) {
 	for i, rigidBody := range w.rigidBodies {
 		if rb == rigidBody {
 			copy(w.rigidBodies[i:], w.rigidBodies[i+1:])
@@ -29,16 +29,17 @@ func (w *PhysicalWorld) DeleteRigidBody(rb *RigidBody) {
 	}
 }
 
-func (w *PhysicalWorld) GetRigidBodies() []*RigidBody {
+func (w *World) GetRigidBodies() []*RigidBody {
 	return w.rigidBodies
 }
 
-func (w *PhysicalWorld) DeleteRigidBodies() {
+func (w *World) DeleteRigidBodies() {
 	w.rigidBodies = []*RigidBody{}
 }
 
-func (w *PhysicalWorld) Update(debugMessages *[]string) {
+func (w *World) Update() {
 	w.ContactPoints = []Vector2{}
+
 	for _, rb := range w.rigidBodies {
 		rb.Update(w)
 	}
