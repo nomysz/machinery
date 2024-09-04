@@ -116,6 +116,19 @@ func GetRegularPolygonArea(numSides int, sideLen float64) float64 {
 	return (float64(numSides) * sideLen * sideLen) / (4 * math.Tan(math.Pi/float64(numSides)))
 }
 
+func GetPolygonArea(vs Vertices) float64 {
+	var area float64 = 0
+
+	for i, vB := range vs {
+		vA := vs.GetNextVertex(i)
+		width := vA.X - vB.X
+		height := (vB.Y + vA.Y) / 2
+		area += width * height
+	}
+
+	return math.Abs(area)
+}
+
 func GenerateRegularPolygon(numSides int, sideLen float64) Vertices {
 	var (
 		vertices Vertices
