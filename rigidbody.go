@@ -126,7 +126,7 @@ func (rb *RigidBody) Update(w *World) {
 			collision.ContactPoints = GetContactPoints(*rb, *rbB, collision)
 			w.ContactPoints = append(w.ContactPoints, collision.ContactPoints...)
 
-			// missing collision resolution here
+			ResolveCollision(rb, rbB, collision)
 		}
 	}
 }

@@ -10,6 +10,44 @@ type Collision struct {
 	ContactPoints []Vector2
 }
 
+func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
+	for _, cp := range c.ContactPoints {
+		if cp.IsEqual(Vector2Zero) {
+			continue
+		}
+
+		armA := cp.NewSubtracted(rbA.Collider.Center)
+		rotationalVelocityA := NewVector2(-rbA.AngularVelocity*armA.Y, rbA.AngularVelocity*armA.X)
+		closingVelocityA := rbA.Velocity.NewAdded(rotationalVelocityA)
+
+		armB := cp.NewSubtracted(rbB.Collider.Center)
+		rotationalVelocityB := NewVector2(-rbB.AngularVelocity*armB.Y, rbB.AngularVelocity*armB.X)
+		closingVelocityB := rbB.Velocity.NewAdded(rotationalVelocityB)
+
+		impulseAugmentationA := armA.Cross(c.Normal)
+		impulseAugmentationA = impulseAugmentationA * rbA.inverseMomentOfInertia * impulseAugmentationA
+
+		impulseAugmentationB := armB.Cross(c.Normal)
+		impulseAugmentationB = impulseAugmentationB * rbB.inverseMomentOfInertia * impulseAugmentationB
+
+		relativeVelocity := closingVelocityA.NewSubtracted(closingVelocityB)
+		separatingVelocity := relativeVelocity.Dot(c.Normal)
+
+		newSeparatingVelocity := -math.Min(rbA.COR, rbB.COR) * separatingVelocity
+		separatingVelocityDifference := newSeparatingVelocity - separatingVelocity
+
+		impulseMagnitude := separatingVelocityDifference / (rbA.inverseMass + rbB.inverseMass + impulseAugmentationA + impulseAugmentationB)
+
+		impulse := c.Normal.NewScaled(impulseMagnitude)
+
+		rbA.Velocity.Add(impulse.NewScaled(rbA.inverseMass))
+		rbB.Velocity.Add(impulse.NewScaled(-rbB.inverseMass))
+
+		rbA.AngularVelocity += armA.Cross(impulse) * rbA.inverseMomentOfInertia
+		rbB.AngularVelocity -= armB.Cross(impulse) * rbB.inverseMomentOfInertia
+	}
+}
+
 func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {
 	var (
 		cp1, cp2      Vector2 = Vector2Zero, Vector2Zero
