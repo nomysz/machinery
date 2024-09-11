@@ -59,8 +59,9 @@ func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {
 }
 
 func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
-	response := Collision{Depth: math.MaxFloat64, Normal: Vector2Zero}
-
+	var (
+		response = Collision{Depth: math.MaxFloat64, Normal: Vector2Zero}
+	)
 	for i := 0; i < len(polyA.Points); i++ {
 		if ok, depth := isSeparatingAxis(polyA, polyB, polyA.Normals[i]); ok {
 			return false, response
@@ -71,7 +72,6 @@ func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
 			}
 		}
 	}
-
 	for i := 0; i < len(polyB.Points); i++ {
 		if ok, depth := isSeparatingAxis(polyA, polyB, polyB.Normals[i]); ok {
 			return false, response
@@ -82,20 +82,18 @@ func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
 			}
 		}
 	}
-
-	direction := polyB.Center.Copy().NewSubtracted(polyB.Center)
-	if direction.Dot(response.Normal) < 0 {
-		response.Normal.Reverse()
-	}
-
 	return true, response
 }
 
 func isSeparatingAxis(polyA, polyB Polygon, axis Vector2) (bool, float64) {
-	minA, maxA := projectOnAxis(polyA.Points, axis)
-	minB, maxB := projectOnAxis(polyB.Points, axis)
-	minDepth := math.Min(maxB-minA, maxA-minB)
-	return maxA < minB || maxB < minA, minDepth
+	var (
+		minA, maxA = projectOnAxis(polyA.Points, axis)
+		minB, maxB = projectOnAxis(polyB.Points, axis)
+	)
+	if maxA < minB || maxB < minA {
+		return true, 0
+	}
+	return false, math.Min(maxB-minA, maxA-minB)
 }
 
 func projectOnAxis(points Vertices, axis Vector2) (min, max float64) {
