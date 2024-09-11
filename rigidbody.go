@@ -40,22 +40,22 @@ func NewRigidBody(
 	onCollisionHandler CollisionHandler,
 ) *RigidBody {
 	var (
-		numSides              int     = len(collider)
-		mass, momentOfInertia float64 = 0, 0
-		area                  float64 = GetPolygonArea(collider)
-		sideLen               float64 = collider[0].Distance(collider[1])
-		broadCollisionRadius  float64 = GetRadiusOfCircumscribedCircleInRegularPolygon(numSides, sideLen) +
+		numSides                                                   int     = len(collider)
+		mass, inverseMass, momentOfInertia, inverseMomentOfInertia float64 = 0, 0, 0, 0
+		area                                                       float64 = GetPolygonArea(collider)
+		sideLen                                                    float64 = collider[0].Distance(collider[1])
+		broadCollisionRadius                                       float64 = GetRadiusOfCircumscribedCircleInRegularPolygon(numSides, sideLen) +
 			broadCollisionRadiusTolerance
 	)
-
 	if isStatic {
 		velocity = Vector2Zero
 		angularVelocity = 0
 	} else {
 		mass = area * dentisity
 		momentOfInertia = GetCircleMomentOfInertia(mass, broadCollisionRadius)
+		inverseMass = 1 / mass
+		inverseMomentOfInertia = 1 / momentOfInertia
 	}
-
 	return &RigidBody{
 		Collider: NewPolygon(
 			position,
@@ -67,9 +67,9 @@ func NewRigidBody(
 		force:                  Vector2Zero,
 		IsStatic:               isStatic,
 		Mass:                   mass,
-		inverseMass:            1 / mass,
+		inverseMass:            inverseMass,
 		momentOfInertia:        momentOfInertia,
-		inverseMomentOfInertia: 1 / momentOfInertia,
+		inverseMomentOfInertia: inverseMomentOfInertia,
 		COR:                    cor,
 		BroadCollisionRadius:   broadCollisionRadius,
 		RelatedObject:          relatedObject,
