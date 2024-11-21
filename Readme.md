@@ -1,3 +1,6 @@
+[![GoDoc](https://godoc.org/github.com/nomysz/machinery?status.svg)](http://godoc.org/github.com/nomysz/machinery)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nomysz/machinery)](https://goreportcard.com/report/github.com/nomysz/machinery)
+
 # Machinery
 
 **Machinery** is a **dead simple game engine toolkit** written in [Go](https://go.dev/).
