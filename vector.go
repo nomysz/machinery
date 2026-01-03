@@ -73,7 +73,7 @@ func (v Vector2) NewAdded(another Vector2) Vector2 {
 }
 
 func (v *Vector2) Subtract(another Vector2) {
-	substracted := another.NewSubtracted(another)
+	substracted := v.NewSubtracted(another)
 	v.X = substracted.X
 	v.Y = substracted.Y
 }
