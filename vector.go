@@ -44,7 +44,7 @@ func (v Vector2) IsEqual(v2 Vector2) bool {
 }
 
 func (v Vector2) IsEqualish(v2 Vector2) bool {
-	return v.Distance(v2) < .0001
+	return v.Distance(v2) < .00001
 }
 
 func (v Vector2) Copy() Vector2 {
