@@ -146,6 +146,20 @@ func (vs Vertices) Centroid() Vector2 {
 	)
 }
 
+func (vs Vertices) NewScaledAroundCentroid(scale Vector2) Vertices {
+	c := vs.Centroid()
+
+	scaled := make(Vertices, len(vs))
+	for i, v := range vs {
+		scaled[i] = NewVector2(
+			c.X+(v.X-c.X)*scale.X,
+			c.Y+(v.Y-c.Y)*scale.Y,
+		)
+	}
+
+	return scaled
+}
+
 func GenerateRegularPolygon(numSides int, sideLen float64) Vertices {
 	var (
 		vs    Vertices
