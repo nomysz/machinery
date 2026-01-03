@@ -1,4 +1,4 @@
-package main
+package machinery
 
 const (
 	GGravity = 9.81

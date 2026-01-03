@@ -1,4 +1,4 @@
-package main
+package machinery
 
 const broadCollisionRadiusTolerance = 5
 

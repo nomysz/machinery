@@ -1,4 +1,4 @@
-package main
+package machinery
 
 // given point and segment defined by two other points
 // provide point on segment that is closest to given point
