@@ -116,7 +116,7 @@ func GetRegularPolygonArea(numSides int, sideLen float64) float64 {
 	return (float64(numSides) * sideLen * sideLen) / (4 * math.Tan(math.Pi/float64(numSides)))
 }
 
-func GetPolygonArea(vs Vertices) float64 {
+func (vs Vertices) GetPolygonArea() float64 {
 	var area float64 = 0
 
 	for i, vB := range vs {
@@ -129,23 +129,40 @@ func GetPolygonArea(vs Vertices) float64 {
 	return math.Abs(area)
 }
 
+func (vs Vertices) Centroid() Vector2 {
+	if len(vs) == 0 {
+		return Vector2{}
+	}
+
+	var x, y float64
+	for _, v := range vs {
+		x += v.X
+		y += v.Y
+	}
+
+	return NewVector2(
+		x/float64(len(vs)),
+		y/float64(len(vs)),
+	)
+}
+
 func GenerateRegularPolygon(numSides int, sideLen float64) Vertices {
 	var (
-		vertices Vertices
-		angle    = PI2 / float64(numSides)
+		vs    Vertices
+		angle = PI2 / float64(numSides)
 	)
 
-	vertices = append(vertices, Vector2Zero)
-	vertices = append(vertices, NewVector2FromAngle(angle, sideLen))
+	vs = append(vs, Vector2Zero)
+	vs = append(vs, NewVector2FromAngle(angle, sideLen))
 
 	for i := 2; i < numSides; i++ {
-		vertices = append(
-			vertices,
+		vs = append(
+			vs,
 			NewVector2AngledFromSection(
-				vertices[i-2], vertices[i-1], angle,
+				vs[i-2], vs[i-1], angle,
 			),
 		)
 	}
 
-	return vertices
+	return vs
 }

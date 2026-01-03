@@ -42,7 +42,7 @@ func NewRigidBody(
 	var (
 		numSides                                                   int     = len(collider)
 		mass, inverseMass, momentOfInertia, inverseMomentOfInertia float64 = 0, 0, 0, 0
-		area                                                       float64 = GetPolygonArea(collider)
+		area                                                       float64 = collider.GetPolygonArea()
 		sideLen                                                    float64 = collider[0].Distance(collider[1])
 		broadCollisionRadius                                       float64 = GetRadiusOfCircumscribedCircleInRegularPolygon(numSides, sideLen) +
 			broadCollisionRadiusTolerance
