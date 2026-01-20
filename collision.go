@@ -53,7 +53,7 @@ func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
 	}
 
 	correction := c.Normal.NewScaled(
-		math.Max(c.Depth-overlapCorrectionSlop, 0) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
+		math.Max(c.Depth-overlapCorrectionSlop, 0.0001) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
 	)
 	rbA.Collider.Position.Add(correction.NewScaled(rbA.inverseMass))
 	rbB.Collider.Position.Add(correction.NewScaled(-rbB.inverseMass))
