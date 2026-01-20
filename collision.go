@@ -4,6 +4,11 @@ import (
 	"math"
 )
 
+const (
+	overlapCorrectionPercent = 0.8
+	overlapCorrectionSlop    = 0.01
+)
+
 type Collision struct {
 	Depth         float64
 	Normal        Vector2
@@ -46,6 +51,12 @@ func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
 		rbA.AngularVelocity += armA.Cross(impulse) * rbA.inverseMomentOfInertia
 		rbB.AngularVelocity -= armB.Cross(impulse) * rbB.inverseMomentOfInertia
 	}
+
+	correction := c.Normal.NewScaled(
+		math.Max(c.Depth-overlapCorrectionSlop, 0) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
+	)
+	rbA.Collider.Position.Add(correction.NewScaled(rbA.inverseMass))
+	rbB.Collider.Position.Add(correction.NewScaled(-rbB.inverseMass))
 }
 
 func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {
