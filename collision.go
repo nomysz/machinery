@@ -120,6 +120,12 @@ func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
 			}
 		}
 	}
+
+	centerDelta := polyB.Center.NewSubtracted(polyA.Center)
+	if centerDelta.Dot(response.Normal) < 0 {
+		response.Normal = response.Normal.NewScaled(-1)
+	}
+
 	return true, response
 }
 
