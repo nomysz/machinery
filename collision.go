@@ -52,11 +52,13 @@ func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
 		rbB.AngularVelocity -= armB.Cross(impulse) * rbB.inverseMomentOfInertia
 	}
 
-	correction := c.Normal.NewScaled(
-		math.Max(c.Depth-overlapCorrectionSlop, 0.0001) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
-	)
-	rbA.Collider.Position.Add(correction.NewScaled(rbA.inverseMass))
-	rbB.Collider.Position.Add(correction.NewScaled(-rbB.inverseMass))
+	if c.Depth-overlapCorrectionSlop > 0 {
+		correction := c.Normal.NewScaled(
+			(c.Depth - overlapCorrectionSlop) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
+		)
+		rbA.Collider.Position.Add(correction.NewScaled(rbA.inverseMass))
+		rbB.Collider.Position.Add(correction.NewScaled(-rbB.inverseMass))
+	}
 }
 
 func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {

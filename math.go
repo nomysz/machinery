@@ -10,7 +10,7 @@ const (
 )
 
 func IsEqualish(a, b float64) bool {
-	return math.Abs(b-a) < .0001
+	return math.Abs(b-a) < 10e-5
 }
 
 func NormalizeRadians(radians float64) float64 {
