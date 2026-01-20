@@ -110,27 +110,23 @@ func GetContactPoints(rbA, rbB RigidBody, c Collision) []Vector2 {
 }
 
 func CheckPolyPolyCollision(polyA, polyB Polygon) (bool, Collision) {
-	var (
-		response = Collision{Depth: math.MaxFloat64, Normal: Vector2Zero}
-	)
+	response := Collision{Depth: math.MaxFloat64, Normal: Vector2Zero}
+
 	for i := 0; i < len(polyA.Points); i++ {
 		if ok, depth := isSeparatingAxis(polyA, polyB, polyA.Normals[i]); ok {
 			return false, response
-		} else {
-			if depth < response.Depth {
-				response.Depth = depth
-				response.Normal = polyA.Normals[i]
-			}
+		} else if depth < response.Depth {
+			response.Depth = depth
+			response.Normal = polyA.Normals[i]
 		}
 	}
+
 	for i := 0; i < len(polyB.Points); i++ {
 		if ok, depth := isSeparatingAxis(polyA, polyB, polyB.Normals[i]); ok {
 			return false, response
-		} else {
-			if depth < response.Depth {
-				response.Depth = depth
-				response.Normal = polyB.Normals[i]
-			}
+		} else if depth < response.Depth {
+			response.Depth = depth
+			response.Normal = polyB.Normals[i]
 		}
 	}
 
@@ -148,7 +144,7 @@ func isSeparatingAxis(polyA, polyB Polygon, axis Vector2) (bool, float64) {
 		minB, maxB = projectOnAxis(polyB.Points, axis)
 	)
 
-	if maxA < minB || maxB < minA {
+	if maxA < minB+1e-9 || maxB < minA+1e-9 {
 		return true, 0
 	}
 
@@ -167,8 +163,8 @@ func isSeparatingAxis(polyA, polyB Polygon, axis Vector2) (bool, float64) {
 func projectOnAxis(points Vertices, axis Vector2) (min, max float64) {
 	min = math.MaxFloat64
 	max = -math.MaxFloat64
-	for i := 0; i < len(points); i++ {
-		dot := axis.Dot(points[i])
+	for _, p := range points {
+		dot := axis.Dot(p)
 		if dot < min {
 			min = dot
 		}
