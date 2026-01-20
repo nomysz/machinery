@@ -38,7 +38,7 @@ func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
 		relativeVelocity := closingVelocityA.NewSubtracted(closingVelocityB)
 		separatingVelocity := relativeVelocity.Dot(c.Normal)
 
-		newSeparatingVelocity := -math.Min(rbA.COR, rbB.COR) * separatingVelocity
+		newSeparatingVelocity := math.Max(0, -math.Min(rbA.COR, rbB.COR)*separatingVelocity)
 		separatingVelocityDifference := newSeparatingVelocity - separatingVelocity
 
 		impulseMagnitude := separatingVelocityDifference / (rbA.inverseMass + rbB.inverseMass + impulseAugmentationA + impulseAugmentationB)
@@ -54,7 +54,7 @@ func ResolveCollision(rbA, rbB *RigidBody, c Collision) {
 
 	if c.Depth-overlapCorrectionSlop > 0 {
 		correction := c.Normal.NewScaled(
-			(c.Depth - overlapCorrectionSlop) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
+			math.Max(c.Depth-overlapCorrectionSlop, 10e-4) / (rbA.inverseMass + rbB.inverseMass) * overlapCorrectionPercent,
 		)
 		rbA.Collider.Position.Add(correction.NewScaled(rbA.inverseMass))
 		rbB.Collider.Position.Add(correction.NewScaled(-rbB.inverseMass))
