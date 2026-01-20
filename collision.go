@@ -128,10 +128,21 @@ func isSeparatingAxis(polyA, polyB Polygon, axis Vector2) (bool, float64) {
 		minA, maxA = projectOnAxis(polyA.Points, axis)
 		minB, maxB = projectOnAxis(polyB.Points, axis)
 	)
+
 	if maxA < minB || maxB < minA {
 		return true, 0
 	}
-	return false, math.Min(maxB-minA, maxA-minB)
+
+	var (
+		overlapA = maxB - minA
+		overlapB = maxA - minB
+	)
+
+	if overlapB < overlapA {
+		return false, overlapB
+	}
+
+	return false, overlapA
 }
 
 func projectOnAxis(points Vertices, axis Vector2) (min, max float64) {
